@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Geolocalización OSM</title>
+</head>
+
+<body>
+
+  <h2>Geolocalización</h2>
+
+  <fieldset>
+    <legend>Origen</legend>
+
+    Lat: <input id="oLat" value="-16.395333442942103"><br>
+    Lon: <input id="oLon" value="-71.54772162503154"><br>
+
+    <p><b>Dirección Origen:</b> <span id="dirOrigen"></span></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Destino</legend>
+
+    Lat: <input id="dLat" value="-16.406547"><br>
+    Lon: <input id="dLon" value="-71.553179"><br>
+
+    <p><b>Dirección Destino:</b> <span id="dirDestino"></span></p>
+  </fieldset>
+
+  <br>
+
+  <button onclick="consultar()">Consultar</button>
+
+  <br><br>
+
+  <p>Distancia: <span id="dist"></span> km</p>
+  <p>Tiempo: <span id="tiempo"></span> min</p>
+
+  <script>
+    async function consultar() {
+
+      const oLat = document.getElementById("oLat").value;
+      const oLon = document.getElementById("oLon").value;
+      const dLat = document.getElementById("dLat").value;
+      const dLon = document.getElementById("dLon").value;
+
+      const gO = await fetch(`/api/geocode?lat=${oLat}&lon=${oLon}`);
+      const dataO = await gO.json();
+
+      const gD = await fetch(`/api/geocode?lat=${dLat}&lon=${dLon}`);
+      const dataD = await gD.json();
+
+      document.getElementById("dirOrigen").innerText = dataO.direccion;
+      document.getElementById("dirDestino").innerText = dataD.direccion;
+
+      const r = await fetch(`/api/ruta?oLat=${oLat}&oLon=${oLon}&dLat=${dLat}&dLon=${dLon}`);
+      const dataR = await r.json();
+
+      document.getElementById("dist").innerText = dataR.distancia_km;
+      document.getElementById("tiempo").innerText = dataR.duracion_min;
+    }
+  </script>
+
+</body>
+</html>
